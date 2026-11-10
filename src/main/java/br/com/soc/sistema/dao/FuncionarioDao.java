@@ -104,4 +104,18 @@ public class FuncionarioDao extends Dao {
 		}		
 		return null;
 	}
+	
+	public void updateFuncionario(FuncionarioVo funcionarioVo){
+	    StringBuilder query = new StringBuilder("UPDATE funcionario SET nm_funcionario = ? WHERE rowid = ?");
+	    try(
+	        Connection con = getConexao(); 
+	        PreparedStatement ps = con.prepareStatement(query.toString())
+	    ) {
+	        ps.setString(1, funcionarioVo.getNome());
+	        ps.setString(2, funcionarioVo.getRowid());
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 }
