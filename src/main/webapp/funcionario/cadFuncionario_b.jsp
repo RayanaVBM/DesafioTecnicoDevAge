@@ -58,8 +58,11 @@
 										<s:text name="label.editar"/>
 									</a>
 
-									<a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmarExclusao">
-										<s:text name="label.excluir"/>
+									<s:url action="excluirFuncionarios" var="excluir">
+									    <s:param name="funcionarioVo.rowid" value="rowid"></s:param>
+									</s:url>
+									<a href="${excluir}" class="btn btn-danger text-white" onclick="return confirm('<s:text name="label.modal.corpo"/>');">
+									    <s:text name="label.excluir"/>
 									</a>
 								</td>
 							</tr>

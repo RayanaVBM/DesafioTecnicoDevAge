@@ -118,4 +118,14 @@ public class FuncionarioDao extends Dao {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public void deleteFuncionario(String rowid){
+	    StringBuilder query = new StringBuilder("DELETE FROM funcionario WHERE rowid = ?");
+	    try(Connection con = getConexao(); PreparedStatement ps = con.prepareStatement(query.toString())){
+	        ps.setString(1, rowid);
+	        ps.executeUpdate();
+	    }catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 }

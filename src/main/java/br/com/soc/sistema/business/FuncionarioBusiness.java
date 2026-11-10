@@ -20,25 +20,11 @@ public class FuncionarioBusiness {
 	public List<FuncionarioVo> trazerTodosOsFuncionarios(){
 		return dao.findAllFuncionarios();
 	}	
-	
-//	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
-//		try {
-//			if(funcionarioVo.getNome().isEmpty())
-//				throw new IllegalArgumentException("Nome nao pode ser em branco");
-//			
-//			dao.insertFuncionario(funcionarioVo);
-//		} catch (Exception e) {
-//			throw new BusinessException("Nao foi possivel realizar a inclusao do registro");
-//		}
-//		
-//	}	
-	
+		
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
 	    try {
 	        if(funcionarioVo.getNome().isEmpty())
 	            throw new IllegalArgumentException("Nome nao pode ser em branco");
-	        
-	        // Verifica se é uma inserção ou uma atualização
 	        if(funcionarioVo.getRowid() == null || funcionarioVo.getRowid().isEmpty()) {
 	            dao.insertFuncionario(funcionarioVo);
 	        } else {
@@ -77,5 +63,13 @@ public class FuncionarioBusiness {
 		}catch (NumberFormatException e) {
 			throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO);
 		}
+	}
+	
+	public void excluirFuncionario(String rowid) {
+	    try {
+	        dao.deleteFuncionario(rowid);
+	    } catch (Exception e) {
+	        throw new BusinessException("Não foi possível realizar a exclusão do registro.");
+	    }
 	}
 }

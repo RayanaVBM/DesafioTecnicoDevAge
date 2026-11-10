@@ -77,4 +77,11 @@ public class FuncionarioAction extends Action {
 	public void setFuncionarioVo(FuncionarioVo funcionarioVo) {
 		this.funcionarioVo = funcionarioVo;
 	}
+	
+	public String excluir() {
+	    if(funcionarioVo.getRowid() != null && !funcionarioVo.getRowid().isEmpty()) {
+	        business.excluirFuncionario(funcionarioVo.getRowid());
+	    }
+	    return REDIRECT;
+	}
 }
