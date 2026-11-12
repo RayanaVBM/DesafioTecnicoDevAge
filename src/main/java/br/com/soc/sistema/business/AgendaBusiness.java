@@ -38,4 +38,18 @@ public class AgendaBusiness {
             throw new BusinessException("Foi informado um caracter no lugar de um numero");
         }
     }
+    
+    public void excluirAgenda(String rowid) {
+        try {
+            if (dao.isAgendaComCompromissos(rowid)) {
+                throw new BusinessException("Não é possível excluir: existem compromissos cadastrados nesta agenda.");
+            }
+            
+            dao.deleteAgenda(rowid);
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception e) {
+            throw new BusinessException("Não foi possível realizar a exclusão da agenda.");
+        }
+    }
 }
