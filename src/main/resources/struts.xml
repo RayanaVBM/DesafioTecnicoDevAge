@@ -4,6 +4,7 @@
 <struts>
 
 	<constant name="struts.devMode" value="true" />
+	<constant name="struts.i18n.encoding" value="UTF-8" />
 	<constant name="struts.ui.theme" value="simple" />
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.custom.i18n.resources" value="ApplicationResources" />
@@ -29,6 +30,10 @@
 			<result name="success">/compromisso/cadCompromisso_b.jsp</result>
 			<result name="input">/compromisso/cadCompromisso_i.jsp</result>
 			<result name="redirect" type="redirectAction">todosCompromissos</result>
+		</action>
+		<action name="*Relatorio"
+			class="br.com.soc.sistema.action.RelatorioAction" method="{1}">
+			<result name="success">/relatorio/gerarRelatorio.jsp</result>
 		</action>
 	</package>
 

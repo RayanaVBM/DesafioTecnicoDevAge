@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 	<%@ taglib prefix="s" uri="/struts-tags" %>
 		<!DOCTYPE html>
 		<html>
 
 		<head>
-			<meta charset="UTF8">
+			<meta charset="UTF-8">
 			<title>Agendas Cadastradas</title>
 			<link rel='stylesheet' href='webjars/bootstrap/5.1.3/css/bootstrap.min.css'>
 		</head>

@@ -85,4 +85,34 @@ public class CompromissoDao extends Dao {
         } catch (SQLException e) { e.printStackTrace(); }
         return null;
     }
+    
+    public List<CompromissoVo> findCompromissosByPeriodo(String dataInicial, String dataFinal) {
+        String sql = "SELECT c.rowid, c.dt_compromisso, c.hr_compromisso, " +
+                     "f.rowid AS id_func, f.nm_funcionario, " +
+                     "a.rowid AS id_agenda, a.nm_agenda " +
+                     "FROM compromisso c " +
+                     "INNER JOIN funcionario f ON c.id_funcionario = f.rowid " +
+                     "INNER JOIN agenda a ON c.id_agenda = a.rowid " +
+                     "WHERE c.dt_compromisso BETWEEN ? AND ? " +
+                     "ORDER BY c.dt_compromisso, c.hr_compromisso";
+        
+        List<CompromissoVo> lista = new ArrayList<>();
+        try (Connection con = getConexao(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, dataInicial);
+            ps.setString(2, dataFinal);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CompromissoVo vo = new CompromissoVo();
+                    vo.setRowid(rs.getString("rowid"));
+                    vo.setData(rs.getString("dt_compromisso"));
+                    vo.setHora(rs.getString("hr_compromisso"));
+                    vo.setFuncionario(new FuncionarioVo(rs.getString("id_func"), rs.getString("nm_funcionario")));
+                    vo.setAgenda(new AgendaVo(rs.getString("id_agenda"), rs.getString("nm_agenda"), null));
+                    lista.add(vo);
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return lista;
+    }
 }

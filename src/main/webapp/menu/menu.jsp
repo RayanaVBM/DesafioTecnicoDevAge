@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#">SOC - Avaliação</a>
@@ -15,6 +15,9 @@
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/avaliacao/todosCompromissos.action">Compromissos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/avaliacao/abrirRelatorio.action">Relatório</a>
 					</li>
 				</ul>
 			</div>
