@@ -8,7 +8,7 @@
 		<link rel='stylesheet' href='webjars/bootstrap/5.1.3/css/bootstrap.min.css'>
 	</head>
 	<body class="bg-secondary">
-
+		<jsp:include page="/menu/menu.jsp" />
 		<div class="container">
 			<s:form action="/novoFuncionarios.action">
 
