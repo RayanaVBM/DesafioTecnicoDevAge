@@ -32,8 +32,18 @@
 									<label class="form-label">Data Final:</label>
 									<s:textfield type="date" cssClass="form-control" name="filtrar.dataFinal" />
 								</div>
-								<div class="col-md-4 d-flex align-items-end mt-4">
-									<button class="btn btn-primary w-100">Gerar Relatório em Tela</button>
+								<div class="col-md-4 mt-4">
+									<!-- Chama a action gerarRelatorio.action -->
+									<button class="btn btn-primary w-100 mb-2" type="submit"
+										formaction="/avaliacao/gerarRelatorio.action">
+										Gerar Relatório em Tela
+									</button>
+
+									<!-- Chama a action exportarRelatorio.action -->
+									<button class="btn btn-success w-100" type="submit"
+										formaction="/avaliacao/exportarRelatorio.action">
+										Exportar para Excel (XLSX)
+									</button>
 								</div>
 							</div>
 						</s:form>
