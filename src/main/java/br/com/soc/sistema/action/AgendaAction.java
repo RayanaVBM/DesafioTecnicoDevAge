@@ -19,9 +19,17 @@ public class AgendaAction extends Action {
     }
 
     public String novo() {
-        if(agendaVo.getNome() == null) return INPUT;
-        business.salvarAgenda(agendaVo);
-        return REDIRECT;
+        if(agendaVo.getNome() == null) {
+            return INPUT; 
+        }
+        
+        try {
+            business.salvarAgenda(agendaVo);
+            return REDIRECT;
+        } catch (br.com.soc.sistema.exception.BusinessException e) {
+            addActionError(e.getMessage());
+            return INPUT; 
+        }
     }
 
     public String editar() {
@@ -44,12 +52,12 @@ public class AgendaAction extends Action {
     public void setAgendaVo(AgendaVo agendaVo) { this.agendaVo = agendaVo; }
     
     public String excluir() {
-        try {
-            if(agendaVo.getRowid() != null && !agendaVo.getRowid().isEmpty()) {
+        if(agendaVo.getRowid() != null && !agendaVo.getRowid().isEmpty()) {
+            try {
                 business.excluirAgenda(agendaVo.getRowid());
+            } catch (br.com.soc.sistema.exception.BusinessException e) {
+                addActionError(e.getMessage());
             }
-        } catch (br.com.soc.sistema.exception.BusinessException e) {
-            addActionError(e.getMessage());
         }
         return todos(); 
     }

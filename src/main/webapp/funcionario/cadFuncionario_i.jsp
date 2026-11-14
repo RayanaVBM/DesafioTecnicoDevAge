@@ -27,6 +27,16 @@
 					</div>
 					
 					<div class="card-body">
+						<div class="card-body">
+
+						    <s:if test="hasActionErrors()">
+						        <div class="alert alert-danger" role="alert">
+						            <s:actionerror escape="false" />
+						        </div>
+						    </s:if>
+
+						    <div class="row align-items-center">
+						        <label for="id" class="col-sm-1 col-form-label text-center"> Código: </label>
 						<div class="row align-items-center">
 							<label for="id" class="col-sm-1 col-form-label text-center">
 								Código:
@@ -43,7 +53,7 @@
 							</label>	
 
 							<div class="col-sm-5">
-								<s:textfield cssClass="form-control" id="nome" name="funcionarioVo.nome"/>							
+								<s:textfield cssClass="form-control" id="nome" name="funcionarioVo.nome" maxlength="70" />						
 							</div>	
 						</div>
 					</div>

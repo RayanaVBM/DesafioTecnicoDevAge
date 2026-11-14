@@ -17,20 +17,46 @@ public class AgendaBusiness {
     }
 
     public void salvarAgenda(AgendaVo agendaVo) {
+        if(agendaVo.getNome() == null || agendaVo.getNome().trim().isEmpty()) {
+            throw new BusinessException("O campo Nome da Agenda é obrigatório e não pode ficar em branco.");
+        }
+        
+        if(agendaVo.getNome().length() > 70) {
+            throw new BusinessException("O campo Nome da Agenda ultrapassou o limite máximo de 70 caracteres.");
+        }
+
+        if(agendaVo.getPeriodoDisponivel() == null || agendaVo.getPeriodoDisponivel().trim().isEmpty()) {
+            throw new BusinessException("A seleção do Período Disponível é obrigatória.");
+        }
+
         try {
-            if(agendaVo.getNome().isEmpty()) throw new IllegalArgumentException("Nome não pode ser em branco");
-            if(agendaVo.getPeriodoDisponivel().isEmpty()) throw new IllegalArgumentException("Período não pode ser em branco");
-            
-            if(agendaVo.getRowid() == null || agendaVo.getRowid().isEmpty()){
+            if(agendaVo.getRowid() == null || agendaVo.getRowid().isEmpty()) {
                 dao.insertAgenda(agendaVo);
             } else {
                 dao.updateAgenda(agendaVo);
             }
         } catch (Exception e) {
-            throw new BusinessException("Não foi possível realizar a gravação do registro");
+            throw new BusinessException("Não foi possível realizar a gravação da agenda no banco de dados.");
         }
     }
 
+    public void excluirAgenda(String rowid) {
+        AgendaVo agenda = buscarAgendaPor(rowid);
+        if (agenda == null) {
+            throw new BusinessException("Operação cancelada: Não existe agenda cadastrada com o código " + rowid + ".");
+        }
+
+        if (dao.isAgendaComCompromissos(rowid)) {
+            throw new BusinessException("Não é possível excluir: existem compromissos cadastrados nesta agenda.");
+        }
+        
+        try {
+            dao.deleteAgenda(rowid);
+        } catch (Exception e) {
+            throw new BusinessException("Não foi possível realizar a exclusão da agenda.");
+        }
+    }
+    
     public AgendaVo buscarAgendaPor(String codigo) {
         try {
             return dao.findByCodigo(Integer.parseInt(codigo));
@@ -39,17 +65,4 @@ public class AgendaBusiness {
         }
     }
     
-    public void excluirAgenda(String rowid) {
-        try {
-            if (dao.isAgendaComCompromissos(rowid)) {
-                throw new BusinessException("Não é possível excluir: existem compromissos cadastrados nesta agenda.");
-            }
-            
-            dao.deleteAgenda(rowid);
-        } catch (BusinessException be) {
-            throw be;
-        } catch (Exception e) {
-            throw new BusinessException("Não foi possível realizar a exclusão da agenda.");
-        }
-    }
 }

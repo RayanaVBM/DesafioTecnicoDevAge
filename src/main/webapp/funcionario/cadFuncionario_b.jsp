@@ -34,7 +34,17 @@
 					</s:form>			
 				</div>				
 			</div>
-
+			    <s:if test="hasActionErrors()">
+			        <div class="row mb-2">
+			            <div class="col-12">
+			                <div class="alert alert-danger" role="alert">
+			                    <s:actionerror escape="false" />
+			                </div>
+			            </div>
+			        </div>
+			    </s:if>
+			    <div class="row">
+			        <table class="table table-light table-striped align-middle">
 			<div class="row">
 				<table class="table table-light table-striped align-middle">
 					<thead>
@@ -62,8 +72,9 @@
 									<s:url action="excluirFuncionarios" var="excluir">
 									    <s:param name="funcionarioVo.rowid" value="rowid"></s:param>
 									</s:url>
-									<a href="${excluir}" class="btn btn-danger text-white" onclick="return confirm('<s:text name="label.modal.corpo"/>');">
-									    <s:text name="label.excluir"/>
+									<a href="${excluir}" class="btn btn-danger text-white" 
+									   onclick="if(confirm('Deseja realizar a Exclusão do funcionário?')) { return confirm('ATENÇÃO: Ao excluir o cadastro do funcionário, todos os seus compromissos também serão excluídos. Deseja realmente continuar?'); } else { return false; }">
+									    Excluir
 									</a>
 								</td>
 							</tr>

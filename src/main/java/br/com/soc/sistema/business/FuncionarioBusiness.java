@@ -22,17 +22,23 @@ public class FuncionarioBusiness {
 	}
 
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
-		try {
-			if (funcionarioVo.getNome().isEmpty())
-				throw new IllegalArgumentException("Nome nao pode ser em branco");
-			if (funcionarioVo.getRowid() == null || funcionarioVo.getRowid().isEmpty()) {
-				dao.insertFuncionario(funcionarioVo);
-			} else {
-				dao.updateFuncionario(funcionarioVo);
-			}
-		} catch (Exception e) {
-			throw new BusinessException("Nao foi possivel realizar a gravacao do registro");
-		}
+	    if(funcionarioVo.getNome() == null || funcionarioVo.getNome().trim().isEmpty()) {
+	        throw new BusinessException("O campo Nome é obrigatório e não pode ficar em branco.");
+	    }
+	    
+	    if(funcionarioVo.getNome().length() > 70) {
+	        throw new BusinessException("O campo Nome ultrapassou o limite máximo de 70 caracteres.");
+	    }
+	    
+	    try {
+	        if(funcionarioVo.getRowid() == null || funcionarioVo.getRowid().isEmpty()) {
+	            dao.insertFuncionario(funcionarioVo);
+	        } else {
+	            dao.updateFuncionario(funcionarioVo);
+	        }
+	    } catch (Exception e) {
+	        throw new BusinessException("Não foi possível realizar a gravação do registro no banco de dados.");
+	    }
 	}
 
 	public List<FuncionarioVo> filtrarFuncionarios(FuncionarioFilter filter) {

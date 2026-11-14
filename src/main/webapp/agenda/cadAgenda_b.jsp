@@ -12,13 +12,15 @@
 		<body class="bg-secondary">
 			<jsp:include page="/menu/menu.jsp" />
 			<div class="container mt-5">
-
-				<!-- Exibe a mensagem de erro caso a exclusão seja bloqueada -->
 				<s:if test="hasActionErrors()">
-					<div class="alert alert-danger" role="alert">
-						<s:actionerror escape="false" />
-					</div>
-				</s:if>
+				        <div class="row mb-2">
+				            <div class="col-12">
+				                <div class="alert alert-danger" role="alert">
+				                    <s:actionerror escape="false" />
+				                </div>
+				            </div>
+				        </div>
+				    </s:if>
 
 				<table class="table table-light table-striped align-middle">
 					<thead>
@@ -41,7 +43,6 @@
 									</s:url>
 									<a href="${editar}" class="btn btn-warning text-white">Editar</a>
 
-									<!-- Novo Botão de Excluir -->
 									<s:url action="excluirAgendas" var="excluir">
 										<s:param name="agendaVo.rowid" value="rowid"></s:param>
 									</s:url>

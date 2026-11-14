@@ -36,9 +36,18 @@ public class WebServiceFuncionariosImpl implements WebServiceFuncionarios {
     @Override
     public String buscarFuncionario(String codigo) {
         try {
-            return business.buscarFuncionarioPor(codigo).toString();
+            FuncionarioVo funcionario = business.buscarFuncionarioPor(codigo);
+            
+            if (funcionario == null) {
+                return "Consulta sem resultados: Não existe funcionário cadastrado com o código " + codigo + ".";
+            }
+            
+            return funcionario.toString();
+            
+        } catch (br.com.soc.sistema.exception.BusinessException be) {
+            return "Erro de validação: " + be.getMessage();
         } catch (Exception e) {
-            return "Erro ao buscar: " + e.getMessage();
+            return "Erro interno ao buscar funcionário: " + e.getMessage();
         }
     }
 

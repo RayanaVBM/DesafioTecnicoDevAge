@@ -24,21 +24,54 @@ public class FuncionarioAction extends Action {
 	}
 	
 	public String filtrar() {
-		if(filtrar.isNullOpcoesCombo())
-			return REDIRECT;
-		
-		funcionarios = business.filtrarFuncionarios(filtrar);
-		
-		return SUCCESS;
+	    if(filtrar.isNullOpcoesCombo()) {
+	        return REDIRECT;
+	    }
+	    
+	    if(filtrar.getValorBusca() == null || filtrar.getValorBusca().trim().isEmpty()) {
+	        addActionError("É necessário inserir ao menos um dado no campo de busca para realizar a pesquisa.");
+	        return todos(); 
+	    }
+
+	    if(filtrar.getOpcoesCombo() == OpcoesComboBuscar.NOME) {
+	        if(filtrar.getValorBusca().matches(".*\\d.*")) {
+	            addActionError("O campo nome aceita apenas letras.");
+	            return todos();
+	        }
+	    }
+
+	    try {
+	        funcionarios = business.filtrarFuncionarios(filtrar);
+	    } catch (br.com.soc.sistema.exception.BusinessException e) {
+	        addActionError(e.getMessage());
+	        return todos();
+	    }
+	    
+	    return SUCCESS;
 	}
 	
+//	public String novo() {
+//		if(funcionarioVo.getNome() == null)
+//			return INPUT;
+//		
+//		business.salvarFuncionario(funcionarioVo);
+//		
+//		return REDIRECT;
+//	}
 	public String novo() {
-		if(funcionarioVo.getNome() == null)
-			return INPUT;
-		
-		business.salvarFuncionario(funcionarioVo);
-		
-		return REDIRECT;
+	    // Retorna para a tela de formulário se for o primeiro acesso
+	    if(funcionarioVo.getNome() == null) {
+	        return INPUT; 
+	    }
+	    
+	    try {
+	        business.salvarFuncionario(funcionarioVo);
+	        return REDIRECT; // Sucesso: volta para a tabela
+	    } catch (br.com.soc.sistema.exception.BusinessException e) {
+	        // Falha na validação: adiciona o alerta e mantém o usuário no formulário
+	        addActionError(e.getMessage());
+	        return INPUT; 
+	    }
 	}
 	
 	public String editar() {
@@ -80,8 +113,13 @@ public class FuncionarioAction extends Action {
 	
 	public String excluir() {
 	    if(funcionarioVo.getRowid() != null && !funcionarioVo.getRowid().isEmpty()) {
-	        business.excluirFuncionario(funcionarioVo.getRowid());
+	        try {
+	            business.excluirFuncionario(funcionarioVo.getRowid());
+	        } catch (br.com.soc.sistema.exception.BusinessException e) {
+	            addActionError(e.getMessage());
+	        }
 	    }
-	    return REDIRECT;
+	    
+	    return todos(); 
 	}
 }
