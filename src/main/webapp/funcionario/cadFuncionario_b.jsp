@@ -25,10 +25,11 @@
 									headerValue="Escolha..." 
 									listKey="%{codigo}" 
 									listValueKey="%{descricao}"
-									value="filtrar.opcoesCombo.codigo"									
+									value="filtrar.opcoesCombo.codigo"
+									onchange="document.getElementById('campoBusca').value = '';"									
 								/>
-								
-								<s:textfield cssClass="form-control" id="nome" name="filtrar.valorBusca"/>
+								<s:textfield cssClass="form-control" name="filtrar.valorBusca" id="campoBusca" />
+<!--								<s:textfield cssClass="form-control" id="nome" name="filtrar.valorBusca"/>-->
 								<button class="btn btn-primary" type="submit"><s:text name="label.pesquisar"/></button>
 						</div>
 					</s:form>			

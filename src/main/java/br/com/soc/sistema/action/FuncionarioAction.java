@@ -9,7 +9,6 @@ import br.com.soc.sistema.filter.FuncionarioFilter;
 import br.com.soc.sistema.infra.Action;
 import br.com.soc.sistema.infra.OpcoesComboBuscar;
 import br.com.soc.sistema.vo.FuncionarioVo;
-
 public class FuncionarioAction extends Action {
 	
 	private List<FuncionarioVo> funcionarios = new ArrayList<>();
@@ -24,22 +23,26 @@ public class FuncionarioAction extends Action {
 	}
 	
 	public String filtrar() {
-	    if(filtrar.isNullOpcoesCombo()) {
-	        return REDIRECT;
+	    // 1. Se não escolher nenhuma opção no combo (select vazio), recarrega a lista toda
+	    if (filtrar.isNullOpcoesCombo()) {
+	        return todos();
 	    }
 	    
-	    if(filtrar.getValorBusca() == null || filtrar.getValorBusca().trim().isEmpty()) {
-	        addActionError("É necessário inserir ao menos um dado no campo de busca para realizar a pesquisa.");
+	    // 2. Comportamento de "Limpar Filtros": se o campo de busca estiver vazio, 
+	    // traz a listagem inteira sem exibir mensagens de erro.
+	    if (filtrar.getValorBusca() == null || filtrar.getValorBusca().trim().isEmpty()) {
 	        return todos(); 
 	    }
 
-	    if(filtrar.getOpcoesCombo() == OpcoesComboBuscar.NOME) {
-	        if(filtrar.getValorBusca().matches(".*\\d.*")) {
+	    // 3. Validação de números no campo de Nome usando o Enum correto
+	    if (filtrar.getOpcoesCombo() == OpcoesComboBuscar.NOME) {
+	        if (filtrar.getValorBusca().matches(".*\\d.*")) {
 	            addActionError("O campo nome aceita apenas letras.");
 	            return todos();
 	        }
 	    }
 
+	    // 4. Tenta realizar a busca específica
 	    try {
 	        funcionarios = business.filtrarFuncionarios(filtrar);
 	    } catch (br.com.soc.sistema.exception.BusinessException e) {
