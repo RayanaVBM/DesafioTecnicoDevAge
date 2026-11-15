@@ -1,20 +1,20 @@
 CREATE TABLE funcionario (
     rowid bigint auto_increment PRIMARY KEY, 
-    nm_funcionario VARCHAR(255)
+    nm_funcionario VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE agenda (
     rowid bigint auto_increment PRIMARY KEY, 
-    nm_agenda VARCHAR(255),
-    periodo_disponivel VARCHAR(20) 
+    nm_agenda VARCHAR(255) NOT NULL,
+    periodo_disponivel VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE compromisso (
     rowid bigint auto_increment PRIMARY KEY, 
-    id_funcionario bigint, 
-    id_agenda bigint, 
-    dt_compromisso DATE, 
-    hr_compromisso TIME,
+    id_funcionario bigint NOT NULL, 
+    id_agenda bigint NOT NULL, 
+    dt_compromisso DATE NOT NULL, 
+    hr_compromisso TIME NOT NULL,
     FOREIGN KEY(id_funcionario) REFERENCES funcionario(rowid) ON DELETE CASCADE,
     FOREIGN KEY(id_agenda) REFERENCES agenda(rowid) ON DELETE RESTRICT
 );

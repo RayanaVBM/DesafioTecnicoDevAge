@@ -22,23 +22,39 @@ public class FuncionarioBusiness {
 	}
 
 	public void salvarFuncionario(FuncionarioVo funcionarioVo) {
-	    if(funcionarioVo.getNome() == null || funcionarioVo.getNome().trim().isEmpty()) {
-	        throw new BusinessException("O campo Nome é obrigatório e não pode ficar em branco.");
-	    }
-	    
-	    if(funcionarioVo.getNome().length() > 70) {
-	        throw new BusinessException("O campo Nome ultrapassou o limite máximo de 70 caracteres.");
-	    }
-	    
-	    try {
-	        if(funcionarioVo.getRowid() == null || funcionarioVo.getRowid().isEmpty()) {
-	            dao.insertFuncionario(funcionarioVo);
-	        } else {
-	            dao.updateFuncionario(funcionarioVo);
-	        }
-	    } catch (Exception e) {
-	        throw new BusinessException("Não foi possível realizar a gravação do registro no banco de dados.");
-	    }
+		if (funcionarioVo == null || funcionarioVo.getNome() == null || funcionarioVo.getNome().trim().isEmpty()) {
+			throw new BusinessException("O campo Nome é obrigatório e não pode ficar em branco.");
+		}
+
+		String nome = funcionarioVo.getNome().trim();
+		funcionarioVo.setNome(nome);
+
+		if (nome.length() > 70) {
+			throw new BusinessException("O campo Nome ultrapassou o limite máximo de 70 caracteres.");
+		}
+
+		if (nome.matches(".*\\d.*")) {
+			throw new BusinessException("O campo Nome aceita apenas letras.");
+		}
+
+		boolean isNovo = funcionarioVo.getRowid() == null || funcionarioVo.getRowid().trim().isEmpty();
+		if (!isNovo) {
+			FuncionarioVo existente = buscarFuncionarioPor(funcionarioVo.getRowid());
+			if (existente == null) {
+				throw new BusinessException(
+						"Operação cancelada: Não existe funcionário cadastrado com o código " + funcionarioVo.getRowid() + ".");
+			}
+		}
+
+		try {
+			if (isNovo) {
+				dao.insertFuncionario(funcionarioVo);
+			} else {
+				dao.updateFuncionario(funcionarioVo);
+			}
+		} catch (Exception e) {
+			throw new BusinessException("Não foi possível realizar a gravação do registro no banco de dados.", e);
+		}
 	}
 
 	public List<FuncionarioVo> filtrarFuncionarios(FuncionarioFilter filter) {
@@ -47,15 +63,21 @@ public class FuncionarioBusiness {
 		switch (filter.getOpcoesCombo()) {
 		case ID:
 			try {
-				Integer codigo = Integer.parseInt(filter.getValorBusca());
-				funcionarios.add(dao.findByCodigo(codigo));
+				Integer codigo = Integer.parseInt(filter.getValorBusca().trim());
+				FuncionarioVo funcionario = dao.findByCodigo(codigo);
+				if (funcionario != null) {
+					funcionarios.add(funcionario);
+				}
 			} catch (NumberFormatException e) {
-				throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO);
+				throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO, e);
 			}
 			break;
 
 		case NOME:
-			funcionarios.addAll(dao.findAllByNome(filter.getValorBusca()));
+			if (filter.getValorBusca().matches(".*\\d.*")) {
+				throw new BusinessException("O campo nome aceita apenas letras.");
+			}
+			funcionarios.addAll(dao.findAllByNome(filter.getValorBusca().trim()));
 			break;
 		}
 
@@ -63,40 +85,29 @@ public class FuncionarioBusiness {
 	}
 
 	public FuncionarioVo buscarFuncionarioPor(String codigo) {
+		if (codigo == null || codigo.trim().isEmpty()) {
+			throw new BusinessException("O código do funcionário deve ser informado.");
+		}
 		try {
-			Integer cod = Integer.parseInt(codigo);
+			Integer cod = Integer.parseInt(codigo.trim());
 			return dao.findByCodigo(cod);
 		} catch (NumberFormatException e) {
-			throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO);
+			throw new BusinessException(FOI_INFORMADO_CARACTER_NO_LUGAR_DE_UM_NUMERO, e);
 		}
 	}
 
-//	public void excluirFuncionario(String rowid) {
-//	    try {
-//	        dao.deleteFuncionario(rowid);
-//	    } catch (Exception e) {
-//	        throw new BusinessException("Não foi possível realizar a exclusão do registro.");
-//	    }
-//	}
-
 	public void excluirFuncionario(String rowid) {
-		// 1. Reaproveita o método que converte o ID e busca no banco.
-		// Se receber "i", ele já vai barrar e lançar a exceção de caractere inválido.
 		FuncionarioVo funcionario = buscarFuncionarioPor(rowid);
 
-		// 2. Trava de Qualidade: Se retornou nulo, o ID é um número, mas não existe na
-		// base.
 		if (funcionario == null) {
 			throw new BusinessException(
 					"Operação cancelada: Não existe funcionário cadastrado com o código " + rowid + ".");
 		}
 
-		// 3. Se passou pelas validações acima, o ID é válido e existe. Executa o
-		// DELETE.
 		try {
-			dao.deleteFuncionario(rowid);
+			dao.deleteFuncionario(rowid.trim());
 		} catch (Exception e) {
-			throw new BusinessException("Não foi possível realizar a exclusão do registro no banco de dados.");
+			throw new BusinessException("Não foi possível realizar a exclusão do registro no banco de dados.", e);
 		}
 	}
 }

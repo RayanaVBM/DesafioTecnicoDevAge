@@ -27,17 +27,15 @@ public enum OpcoesComboBuscar {
 		this.descricao = descricao;
 	}
 	
-	public static OpcoesComboBuscar buscarPor(String codigo) throws IllegalArgumentException {
-		if(codigo == null)
-			throw new IllegalArgumentException("informe um codigo valido");
+	public static OpcoesComboBuscar buscarPor(String codigo) {
+		if (codigo == null)
+			throw new BusinessException("Informe um código válido");
 		
-		OpcoesComboBuscar opcao = getOpcao(codigo)
-				.orElseThrow(() -> new BusinessException("Codigo informado nao existe"));
-		
-		return opcao;
+		return getOpcao(codigo)
+				.orElseThrow(() -> new BusinessException("Código informado não existe"));
 	}
 	
-	private static Optional<OpcoesComboBuscar> getOpcao(String codigo){
+	private static Optional<OpcoesComboBuscar> getOpcao(String codigo) {
 		return Optional.ofNullable(opcoes.get(codigo));
 	}
 	

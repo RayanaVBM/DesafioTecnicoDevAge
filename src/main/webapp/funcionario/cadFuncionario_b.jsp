@@ -17,35 +17,34 @@
 							<span class="input-group-text">
 								<strong><s:text name="label.buscar.por"/></strong>
 							</span>	
-								<s:select  
-									cssClass="form-select" 
-									name="filtrar.opcoesCombo" 
-									list="listaOpcoesCombo"  
-									headerKey=""  
-									headerValue="Escolha..." 
-									listKey="%{codigo}" 
-									listValueKey="%{descricao}"
-									value="filtrar.opcoesCombo.codigo"
-									onchange="document.getElementById('campoBusca').value = '';"									
-								/>
-								<s:textfield cssClass="form-control" name="filtrar.valorBusca" id="campoBusca" />
-<!--								<s:textfield cssClass="form-control" id="nome" name="filtrar.valorBusca"/>-->
-								<button class="btn btn-primary" type="submit"><s:text name="label.pesquisar"/></button>
+							<s:select  
+								cssClass="form-select" 
+								name="filtrar.opcoesCombo" 
+								list="listaOpcoesCombo"  
+								headerKey=""  
+								headerValue="%{getText('label.escolha')}" 
+								listKey="%{codigo}" 
+								listValueKey="%{descricao}"
+								value="filtrar.opcoesCombo.codigo"
+								onchange="document.getElementById('campoBusca').value = '';"									
+							/>
+							<s:textfield cssClass="form-control" name="filtrar.valorBusca" id="campoBusca" />
+							<button class="btn btn-primary" type="submit"><s:text name="label.pesquisar"/></button>
 						</div>
 					</s:form>			
 				</div>				
 			</div>
-			    <s:if test="hasActionErrors()">
-			        <div class="row mb-2">
-			            <div class="col-12">
-			                <div class="alert alert-danger" role="alert">
-			                    <s:actionerror escape="false" />
-			                </div>
-			            </div>
-			        </div>
-			    </s:if>
-			    <div class="row">
-			        <table class="table table-light table-striped align-middle">
+
+			<s:if test="hasActionErrors()">
+				<div class="row mb-2">
+					<div class="col-12 p-0">
+						<div class="alert alert-danger" role="alert">
+							<s:actionerror escape="false" />
+						</div>
+					</div>
+				</div>
+			</s:if>
+
 			<div class="row">
 				<table class="table table-light table-striped align-middle">
 					<thead>
@@ -57,7 +56,7 @@
 					</thead>
 					
 					<tbody>
-						<s:iterator value="funcionarios" >
+						<s:iterator value="funcionarios">
 							<tr>
 								<td>${rowid}</td>
 								<td>${nome}</td>
@@ -71,12 +70,13 @@
 									</a>
 
 									<s:url action="excluirFuncionarios" var="excluir">
-									    <s:param name="funcionarioVo.rowid" value="rowid"></s:param>
+										<s:param name="funcionarioVo.rowid" value="rowid"></s:param>
 									</s:url>
-									<a href="${excluir}" class="btn btn-danger text-white" 
-									   onclick="if(confirm('Deseja realizar a Exclusão do funcionário?')) { return confirm('ATENÇÃO: Ao excluir o cadastro do funcionário, todos os seus compromissos também serão excluídos. Deseja realmente continuar?'); } else { return false; }">
-									    Excluir
-									</a>
+									<button type="button" class="btn btn-danger text-white"
+										data-bs-toggle="modal" data-bs-target="#confirmarExclusao"
+										onclick="document.getElementById('excluir').href='${excluir}'">
+										<s:text name="label.excluir"/>
+									</button>
 								</td>
 							</tr>
 						</s:iterator>
@@ -95,25 +95,23 @@
 					</tfoot>				
 				</table>
 			</div>
-
-			<div class="row">
-			
-			</div>
 		</div>
 		
-		<div  class="modal fade" id="confirmarExclusao" 
+		<div class="modal fade" id="confirmarExclusao" 
 			data-bs-backdrop="static" data-bs-keyboard="false"
 			tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <h5 class="modal-title"><s:text name="label.modal.titulo"/></h5>
-		        
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      
 		      <div class="modal-body">
 		      	<span><s:text name="label.modal.corpo"/></span>
+		      	<p class="text-danger small mt-2 mb-0">
+		      		Atenção: Ao excluir o funcionário, todos os seus compromissos vinculados também serão excluídos.
+		      	</p>
 		      </div>
 		      
 		      <div class="modal-footer">

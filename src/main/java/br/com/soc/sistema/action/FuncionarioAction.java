@@ -5,91 +5,93 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.soc.sistema.business.FuncionarioBusiness;
+import br.com.soc.sistema.exception.BusinessException;
 import br.com.soc.sistema.filter.FuncionarioFilter;
 import br.com.soc.sistema.infra.Action;
 import br.com.soc.sistema.infra.OpcoesComboBuscar;
 import br.com.soc.sistema.vo.FuncionarioVo;
+
 public class FuncionarioAction extends Action {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	private List<FuncionarioVo> funcionarios = new ArrayList<>();
 	private FuncionarioBusiness business = new FuncionarioBusiness();
 	private FuncionarioFilter filtrar = new FuncionarioFilter();
 	private FuncionarioVo funcionarioVo = new FuncionarioVo();
-	
+
 	public String todos() {
-		funcionarios.addAll(business.trazerTodosOsFuncionarios());	
+		funcionarios = business.trazerTodosOsFuncionarios();
+		return SUCCESS;
+	}
+
+	public String filtrar() {
+		if (filtrar.isNullOpcoesCombo()) {
+			return todos();
+		}
+
+		if (filtrar.getValorBusca() == null || filtrar.getValorBusca().trim().isEmpty()) {
+			return todos();
+		}
+
+		try {
+			funcionarios = business.filtrarFuncionarios(filtrar);
+		} catch (BusinessException e) {
+			addActionError(e.getMessage());
+			return todos();
+		}
 
 		return SUCCESS;
 	}
-	
-	public String filtrar() {
-	    // 1. Se não escolher nenhuma opção no combo (select vazio), recarrega a lista toda
-	    if (filtrar.isNullOpcoesCombo()) {
-	        return todos();
-	    }
-	    
-	    // 2. Comportamento de "Limpar Filtros": se o campo de busca estiver vazio, 
-	    // traz a listagem inteira sem exibir mensagens de erro.
-	    if (filtrar.getValorBusca() == null || filtrar.getValorBusca().trim().isEmpty()) {
-	        return todos(); 
-	    }
 
-	    // 3. Validação de números no campo de Nome usando o Enum correto
-	    if (filtrar.getOpcoesCombo() == OpcoesComboBuscar.NOME) {
-	        if (filtrar.getValorBusca().matches(".*\\d.*")) {
-	            addActionError("O campo nome aceita apenas letras.");
-	            return todos();
-	        }
-	    }
-
-	    // 4. Tenta realizar a busca específica
-	    try {
-	        funcionarios = business.filtrarFuncionarios(filtrar);
-	    } catch (br.com.soc.sistema.exception.BusinessException e) {
-	        addActionError(e.getMessage());
-	        return todos();
-	    }
-	    
-	    return SUCCESS;
-	}
-	
-//	public String novo() {
-//		if(funcionarioVo.getNome() == null)
-//			return INPUT;
-//		
-//		business.salvarFuncionario(funcionarioVo);
-//		
-//		return REDIRECT;
-//	}
 	public String novo() {
-	    // Retorna para a tela de formulário se for o primeiro acesso
-	    if(funcionarioVo.getNome() == null) {
-	        return INPUT; 
-	    }
-	    
-	    try {
-	        business.salvarFuncionario(funcionarioVo);
-	        return REDIRECT; // Sucesso: volta para a tabela
-	    } catch (br.com.soc.sistema.exception.BusinessException e) {
-	        // Falha na validação: adiciona o alerta e mantém o usuário no formulário
-	        addActionError(e.getMessage());
-	        return INPUT; 
-	    }
-	}
-	
-	public String editar() {
-		if(funcionarioVo.getRowid() == null)
+		if (funcionarioVo.getNome() == null) {
+			return INPUT;
+		}
+
+		try {
+			business.salvarFuncionario(funcionarioVo);
 			return REDIRECT;
-		
-		funcionarioVo = business.buscarFuncionarioPor(funcionarioVo.getRowid());
-		
-		return INPUT;
+		} catch (BusinessException e) {
+			addActionError(e.getMessage());
+			return INPUT;
+		}
 	}
-	
-	public List<OpcoesComboBuscar> getListaOpcoesCombo(){
+
+	public String editar() {
+		if (funcionarioVo.getRowid() == null || funcionarioVo.getRowid().trim().isEmpty()) {
+			return REDIRECT;
+		}
+
+		try {
+			funcionarioVo = business.buscarFuncionarioPor(funcionarioVo.getRowid());
+			if (funcionarioVo == null) {
+				addActionError("Funcionário não encontrado.");
+				return todos();
+			}
+			return INPUT;
+		} catch (BusinessException e) {
+			addActionError(e.getMessage());
+			return todos();
+		}
+	}
+
+	public String excluir() {
+		if (funcionarioVo.getRowid() != null && !funcionarioVo.getRowid().trim().isEmpty()) {
+			try {
+				business.excluirFuncionario(funcionarioVo.getRowid());
+			} catch (BusinessException e) {
+				addActionError(e.getMessage());
+			}
+		}
+
+		return todos();
+	}
+
+	public List<OpcoesComboBuscar> getListaOpcoesCombo() {
 		return Arrays.asList(OpcoesComboBuscar.values());
 	}
-	
+
 	public List<FuncionarioVo> getFuncionarios() {
 		return funcionarios;
 	}
@@ -112,17 +114,5 @@ public class FuncionarioAction extends Action {
 
 	public void setFuncionarioVo(FuncionarioVo funcionarioVo) {
 		this.funcionarioVo = funcionarioVo;
-	}
-	
-	public String excluir() {
-	    if(funcionarioVo.getRowid() != null && !funcionarioVo.getRowid().isEmpty()) {
-	        try {
-	            business.excluirFuncionario(funcionarioVo.getRowid());
-	        } catch (br.com.soc.sistema.exception.BusinessException e) {
-	            addActionError(e.getMessage());
-	        }
-	    }
-	    
-	    return todos(); 
 	}
 }
